@@ -3,40 +3,44 @@ import "./TodoListItem.sass";
 
 export default class TodoListItem extends Component {
   state = {
-    done: false
+    done: false,
+    important: false
   };
 
   handleClick = () => {
-    this.setState({
-      done: this.state.done ? false : true
+    this.setState(state => {
+      return { done: !state.done };
+    });
+  };
+  changeImportant = () => {
+    this.setState(state => {
+      return { important: !state.important };
     });
   };
 
   render() {
-    const { important, label } = this.props;
-    const { done } = this.state;
+    const { label, onDeleted } = this.props;
+    const { done, important } = this.state;
     let classNames = "todo-list-item";
     if (done) {
       classNames += " done";
     }
-    const style = {
-      color: important ? "tomato" : "grey",
-      fontWeight: important ? 800 : 400
-    };
+    if (important) {
+      classNames += " important";
+    }
     return (
       <span className={classNames}>
-        <span
-          className="todo-list-item-label"
-          style={style}
-          onClick={this.handleClick}
-        >
+        <span className="todo-list-item-label" onClick={this.handleClick}>
           {label}
         </span>
         <span>
-          <button className="btn btn-outline-success btn-sm">
+          <button
+            onClick={this.changeImportant}
+            className="btn btn-outline-success btn-sm"
+          >
             <i className="fa fa-exclamation" />
           </button>
-          <button className="btn btn-outline-danger btn-sm">
+          <button onClick={onDeleted} className="btn btn-outline-danger btn-sm">
             <i className="fa fa-trash-o" />
           </button>
         </span>

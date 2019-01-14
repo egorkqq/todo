@@ -15,7 +15,8 @@ export default class App extends Component {
       this.createTodoItem("Drink Coffee"),
       this.createTodoItem("Watch YouTube"),
       this.createTodoItem("Look away")
-    ]
+    ],
+    currentFilter: "all"
   };
 
   toggleProperty(arr, id, propName) {
@@ -53,7 +54,7 @@ export default class App extends Component {
       label,
       important: false,
       done: false,
-      visible: true,
+      visibility: true,
       id: this.maxId++
     };
   }
@@ -66,12 +67,51 @@ export default class App extends Component {
     });
   };
 
-  onToggleAllStatus = () => {};
-  onToggleActiveStatus = () => {};
-  onToggleDoneStatus = () => {};
+  onToggleAllStatus = () => {
+    this.setState({ currentFilter: "all" });
+    this.setState(({ todoData }) => {
+      const newData = todoData.map(el => {
+        el.visibility = true;
+        return el;
+      });
+      return {
+        todoData: [...newData]
+      };
+    });
+  };
+  onToggleActiveStatus = () => {
+    this.setState({ currentFilter: "active" });
+    this.setState(({ todoData }) => {
+      const newData = todoData.map(el => {
+        el.visibility = true;
+        if (el.done) {
+          el.visibility = false;
+        }
+        return el;
+      });
+      return {
+        todoData: [...newData]
+      };
+    });
+  };
+  onToggleDoneStatus = () => {
+    this.setState({ currentFilter: "done" });
+    this.setState(({ todoData }) => {
+      const newData = todoData.map(el => {
+        el.visibility = true;
+        if (!el.done) {
+          el.visibility = false;
+        }
+        return el;
+      });
+      return {
+        todoData: [...newData]
+      };
+    });
+  };
 
   render() {
-    const { todoData } = this.state;
+    const { todoData, currentFilter } = this.state;
     const doneCount = todoData.filter(el => el.done).length;
     return (
       <div className="todo-app">
@@ -82,6 +122,7 @@ export default class App extends Component {
             onToggleAllStatus={this.onToggleAllStatus}
             onToggleActiveStatus={this.onToggleActiveStatus}
             onToggleDoneStatus={this.onToggleDoneStatus}
+            currentFilter={currentFilter}
           />
         </div>
         <TodoList

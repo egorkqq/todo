@@ -6,9 +6,10 @@ import "./TodoList.sass";
 const TodoList = ({ todos, onDeleted, onToggleImportant, onToggleDone }) => {
   const elements = todos.map(item => {
     const { id, ...itemProps } = item;
+    console.log(item.visibility);
 
     return (
-      <li key={id} className="list-group-item">
+      <li key={id} className={item.visibility ? "list-group-item" : " hide"}>
         <TodoListItem
           onDeleted={() => {
             onDeleted(id);

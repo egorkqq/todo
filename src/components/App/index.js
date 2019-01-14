@@ -16,6 +16,7 @@ export default class App extends Component {
       this.createTodoItem("Watch YouTube"),
       this.createTodoItem("Look away")
     ],
+    currentFilter: "all",
     term: ""
   };
 
@@ -54,7 +55,7 @@ export default class App extends Component {
       label,
       important: false,
       done: false,
-      visible: true,
+      visibility: true,
       id: this.maxId++
     };
   }
@@ -67,6 +68,48 @@ export default class App extends Component {
     });
   };
 
+  onToggleAllStatus = () => {
+    this.setState({ currentFilter: "all" });
+    this.setState(({ todoData }) => {
+      const newData = todoData.map(el => {
+        el.visibility = true;
+        return el;
+      });
+      return {
+        todoData: [...newData]
+      };
+    });
+  };
+  onToggleActiveStatus = () => {
+    this.setState({ currentFilter: "active" });
+    this.setState(({ todoData }) => {
+      const newData = todoData.map(el => {
+        el.visibility = true;
+        if (el.done) {
+          el.visibility = false;
+        }
+        return el;
+      });
+      return {
+        todoData: [...newData]
+      };
+    });
+  };
+  onToggleDoneStatus = () => {
+    this.setState({ currentFilter: "done" });
+    this.setState(({ todoData }) => {
+      const newData = todoData.map(el => {
+        el.visibility = true;
+        if (!el.done) {
+          el.visibility = false;
+        }
+        return el;
+      });
+      return {
+        todoData: [...newData]
+      };
+    });
+  };
   search(items, term) {
     if (!term.length) return items;
     return items.filter(item => {
@@ -78,7 +121,7 @@ export default class App extends Component {
     this.setState({ term });
   };
   render() {
-    const { todoData, term } = this.state;
+    const { todoData, currentFilter, term } = this.state;
     const visibleItems = this.search(todoData, term);
     const doneCount = todoData.filter(el => el.done).length;
     return (
@@ -86,7 +129,12 @@ export default class App extends Component {
         <AppHeader toDo={todoData.length - doneCount} done={doneCount} />
         <div className="top-panel d-flex">
           <SearchPanel onSearchChange={this.onSearchChange} />
-          <ItemStatusFilter />
+          <ItemStatusFilter
+            onToggleAllStatus={this.onToggleAllStatus}
+            onToggleActiveStatus={this.onToggleActiveStatus}
+            onToggleDoneStatus={this.onToggleDoneStatus}
+            currentFilter={currentFilter}
+          />
         </div>
         <TodoList
           onToggleDone={this.onToggleDone}
